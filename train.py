@@ -15,6 +15,10 @@ from mad.paths import make_log_path
 from mad.data import generate_data
 from mad.model import PLModelWrap
 from mad.registry import task_registry, layer_registry
+from mad.model.vq_language_model import VQTransformer
+from mad.model.vq_pl_model_wrapper import VQPLModelWrap
+
+from pytorch_lightning.callbacks import RichProgressBar
 
 
 def get_args():
@@ -32,7 +36,7 @@ def get_args():
     parser.add_argument('--k-motif-size', type=int, default=1, help='number of adjacent tokens that together form a key in fuzzy in-context recall')
     parser.add_argument('--v-motif-size', type=int, default=1, help='number of adjacent tokens that together form a value in fuzzy in-context recall')
     parser.add_argument('--multi-query', action=argparse.BooleanOptionalAction, default=True, help='if True, multi-query variant of in-context recall tasks is used')
-    
+
     # model settings:
     parser.add_argument('--layers', nargs='+', default=['mh-attention', 'swiglu', 'mh-attention', 'swiglu'], help='layers of model')
     parser.add_argument('--backbone', type=str, default='language-model', help='model backbone used for layers')
@@ -128,7 +132,10 @@ def train(
 
     # PyTorch Lightning Model Wrap.
 
-    model_wrapped = PLModelWrap(model=model, mad_config=mad_config)
+    if isinstance(model, VQTransformer):
+        model_wrapped = VQPLModelWrap(model=model, mad_config=mad_config)
+    else:
+        model_wrapped = PLModelWrap(model=model, mad_config=mad_config)
 
     # Make Data.
 
@@ -161,7 +168,7 @@ def train(
     )
 
     # Make Loggers & Callbacks.
-    
+
     early_stop = pl.callbacks.EarlyStopping(
         monitor='test/Accuracy_epoch',
         min_delta=0.00,
@@ -188,6 +195,8 @@ def train(
             filename="last",
         )
         callbacks += [checkpoint_best, checkpoint_last]
+
+    callbacks += [RichProgressBar()]
 
     loggers = []
     if log_to_csv and log_path is not None:
@@ -232,6 +241,7 @@ def train(
 
     results_train = trainer.validate(dataloaders=train_dl)[0]
     results_test = trainer.validate(dataloaders=test_dl)[0]
+
     results_df = pd.DataFrame({
         # training data:
         'train_acc': results_train['test/Accuracy_epoch'], # its called "test/..." because we compute results with trainer.validate
@@ -243,7 +253,6 @@ def train(
         'test_loss': results_test['test/Loss_epoch'],
     }, index=[0])
     results_df.to_csv(os.path.join(log_path, 'results.csv'), index=False)
-
     # Done!
 
     return results_df

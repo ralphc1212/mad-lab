@@ -56,6 +56,7 @@ class PLModelWrap(pl.LightningModule):
     ) -> tp.Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         inputs, targets = batch
         outputs = self(inputs)
+        print(outputs.keys())
         loss = self.loss_fn(
             outputs.view(-1, outputs.size(-1)),
             targets.view(-1)

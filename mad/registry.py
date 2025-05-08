@@ -141,11 +141,17 @@ layer_registry = {
         'module': layers.channel_mixer_rwkv6_wrapped,
         'cfg': 'configs/layers/rwkv6-channel-mixer.yml',
         'shorthand': 'R6c'
+    },
+    'vq-attn': {
+        'module': layers.VQTransformerLayer,
+        'cfg': 'configs/layers/vq.yml',
+        'shorthand': 'vq'
     }
 }
 
 
 model_registry = {
     'language-model': model.LanguageModel,
-    'autoencoder': model.AutoEncoder
+    'autoencoder': model.AutoEncoder,
+    'vq-lm': model.VQTransformer
 }

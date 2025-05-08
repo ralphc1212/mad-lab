@@ -16,15 +16,19 @@ try:
 except ImportError:
     causal_conv1d_fn, causal_conv1d_update = None, None
 
-try:
-    from mad.model.layers.ops.mamba_ssm.selective_scan_interface import selective_scan_fn, mamba_inner_fn
-except ImportError:
-    selective_scan_fn, mamba_inner_fn = None, None
+# try:
+#     from mad.model.layers.ops.mamba_ssm.selective_scan_interface import selective_scan_fn, mamba_inner_fn
+# except ImportError:
+#     selective_scan_fn, mamba_inner_fn = None, None
 
-try:
-    from mad.model.layers.ops.mamba_ssm.triton.selective_state_update import selective_state_update
-except ImportError:
-    selective_state_update = None
+from mad.model.layers.ops.mamba_ssm.selective_scan_interface import selective_scan_fn, mamba_inner_fn
+
+# try:
+#     from mad.model.layers.ops.mamba_ssm.triton.selective_state_update import selective_state_update
+# except ImportError:
+#     selective_state_update = None
+
+from mad.model.layers.ops.mamba_ssm.triton.selective_state_update import selective_state_update
 
 try:
     from mad.model.layers.ops.mamba_ssm.triton.layernorm import RMSNorm, layer_norm_fn, rms_norm_fn
