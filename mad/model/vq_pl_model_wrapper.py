@@ -7,9 +7,6 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, ReduceLROnPlateau
 
 from mad.metrics import Accuracy
 
-
-
-    
 class VQPLModelWrap(pl.LightningModule):
     """
     PyTorch Lightning wrapper for VQ-based language models.

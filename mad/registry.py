@@ -92,11 +92,11 @@ layer_registry = {
         'cfg': 'configs/layers/hyena-experts.yml',
         'shorthand': 'He'
     },
-    'mamba': {
-        'module':layers. Mamba,
-        'cfg': 'configs/layers/mamba.yml',
-        'shorthand': 'Mb'
-    },
+    # 'mamba': {
+    #     'module':layers. Mamba,
+    #     'cfg': 'configs/layers/mamba.yml',
+    #     'shorthand': 'Mb'
+    # },
     'mh-attention': {
         'module': layers.Attention,
         'cfg': 'configs/layers/mh-attention.yml',
